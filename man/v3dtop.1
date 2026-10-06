@@ -1,0 +1,86 @@
+.TH V3DTOP 1 "October 2026" "v3dtop 0.1.0" "User Commands"
+.SH NAME
+v3dtop \- btop-style live monitor for the Raspberry Pi V3D GPU
+.SH SYNOPSIS
+.B sudo v3dtop
+.RI [ -i\ seconds ]
+.RI [ --once ]
+.RI [ --json ]
+.RI [ --no-trace ]
+.SH DESCRIPTION
+.B v3dtop
+is a zero-dependency terminal monitor for the open-source
+.B v3d
+driver on the Raspberry Pi. It shows real per-engine GPU utilisation computed
+from the
+.B drm-engine-*
+nanosecond counters in DRM
+.IR fdinfo ,
+clock/thermal/throttle state from
+.BR vcgencmd
+and debugfs, the static capability sheet from
+.IR v3d_ident ,
+and live job-submit rates from the
+.B v3d
+and
+.B gpu_scheduler
+ftrace tracepoints.
+.PP
+Root is required to read other processes' fdinfo engine counters and to use the
+tracepoint panel. The tracepoint counters are collected through a private ftrace
+instance under
+.I /sys/kernel/tracing/instances/v3dtop
+which is removed on exit, so the global trace buffer is never disturbed.
+.SH OPTIONS
+.TP
+.BI -i " seconds"
+Refresh interval (default 0.5).
+.TP
+.B --once
+Render a single frame and exit.
+.TP
+.B --json
+Emit one machine-readable JSON sample and exit.
+.TP
+.B --no-trace
+Skip the tracepoint submit panel.
+.TP
+.BR -v ", " --version
+Print version and exit.
+.TP
+.BR -h ", " --help
+Print usage and exit.
+.SH KEYS
+.TP
+.B q
+Quit.
+.TP
+.B p
+Pause / resume the display.
+.TP
+.B t
+Toggle the Job-submits (tracepoint) panel.
+.TP
+.BR + " / " -
+Refresh faster / slower, in 0.1 s steps.
+.SH ENGINES
+RENDER (fragment/pixel work), BIN (geometry binning), CSD (compute dispatch),
+TFU (texture formatting), CPU (CPU-side jobs), CACHE (cache cleans). Each is shown
+as busy-time divided by wall-time for the interval.
+.SH EXIT STATUS
+0 on normal exit.
+.SH FILES
+.TP
+.I /proc/*/fdinfo/*
+Per-client DRM engine and memory counters.
+.TP
+.I /sys/kernel/debug/dri/0/
+v3d_ident and measure_clock.
+.TP
+.I /sys/kernel/tracing/instances/v3dtop/
+Private ftrace instance (created and removed by v3dtop).
+.SH AUTHOR
+Stuart Thomas.
+.SH COPYRIGHT
+Copyright (C) 2026 Stuart Thomas. Dual-licensed; see the LICENSE file.
+Free for non-commercial use (MIT-style); commercial licence available.

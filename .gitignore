@@ -1,0 +1,10 @@
+# compiled binaries
+/v3dtop
+/tools/gpuload
+*.o
+*.out
+*.exe
+
+# OS cruft
+.DS_Store
+Thumbs.db
